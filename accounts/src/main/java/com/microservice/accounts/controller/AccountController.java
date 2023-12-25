@@ -27,8 +27,34 @@ public class AccountController {
                 .body(new ResponseDto(AccountConstant.STATUS_201, AccountConstant.MESSAGE_201));
     }
     @GetMapping("/account")
-    public ResponseEntity<ResponseDto> fetchAccountDetails(@RequestParam String mobileNumber) {
+    public ResponseEntity<CustomerDto> fetchAccountDetails(@RequestParam String mobileNumber) {
+        CustomerDto customerDto = accountService.fetchAccount(mobileNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(customerDto);
+    }
 
-        return null;
+    @PutMapping("/account")
+    public ResponseEntity<ResponseDto> updateAccountDetails(@RequestBody CustomerDto customerDto) {
+        boolean isUpdated = accountService.updateAccount(customerDto);
+        if (isUpdated) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseDto(AccountConstant.STATUS_200, AccountConstant.MESSAGE_200));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(AccountConstant.STATUS_500, AccountConstant.MESSAGE_500));
+        }
+
+    }
+
+    @DeleteMapping("/account")
+    public ResponseEntity<ResponseDto> deleteAccountDetails(@RequestParam String mobileNumber) {
+        boolean isDeleted = accountService.deleteAccount(mobileNumber);
+        if (isDeleted) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResponseDto(AccountConstant.STATUS_200, AccountConstant.MESSAGE_200));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(AccountConstant.STATUS_500, AccountConstant.MESSAGE_500));
+        }
+
     }
 }
